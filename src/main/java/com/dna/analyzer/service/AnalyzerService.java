@@ -12,7 +12,6 @@ public class AnalyzerService {
         private int sizeMatrix = 0;
         private int indexLimitMatrix = 0;
         private char[][] dna;
-        private int numOfSequencesFound = 0;
         private final int maxNumCharacterOfSeq = 4;
 
 
@@ -46,7 +45,7 @@ public class AnalyzerService {
         }
 
         private boolean isMutant(char[][] dna) {
-
+                int numOfSequencesFound = 0;
                 for (int i = 0; i < dna.length; i++) {
                         for (int j = 0; j < dna[0].length; j++) {
                                 char character = dna[i][j];
@@ -61,10 +60,12 @@ public class AnalyzerService {
                 final List<Point> checkableVerticalPositions = getCheckableVerticalPositions(x, y);
                 final List<Point> checkableObliquePositions = getCheckableObliquePositions(x, y);
 
-                return checkPositions(checkableHorizontalPositions, character) || checkPositions(checkableVerticalPositions, character) || checkPositions(checkableObliquePositions, character);
+                return positionMadeAChain(checkableHorizontalPositions, character) ||
+                        positionMadeAChain(checkableVerticalPositions, character) ||
+                        positionMadeAChain(checkableObliquePositions, character);
         }
 
-        private boolean checkPositions(List<Point> checkablePositions, char character) {
+        private boolean positionMadeAChain(List<Point> checkablePositions, char character) {
                 final Predicate<Point> predicate = point -> dna[point.getX()][point.getY()] == character;
                 return checkablePositions.stream().filter(predicate).count() == (maxNumCharacterOfSeq - 1);
         }
