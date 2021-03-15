@@ -1,6 +1,10 @@
 package com.dna.analyzer.service;
 
 import com.dna.analyzer.common.PersonType;
+import com.dna.analyzer.database.VerificationRepository;
+import com.dna.analyzer.model.Statistic;
+import com.dna.analyzer.model.Verification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,13 +18,32 @@ public class AnalyzerService {
         private char[][] dna;
         private final int maxNumCharacterOfSeq = 4;
 
+        @Autowired
+        VerificationRepository repository;
+
+        public Statistic getStats() {
+
+                final List<Verification> allVerifications = repository.findAll();
+
+                if (allVerifications.isEmpty()) {
+                        return new Statistic(0, 0);
+                }
+
+                final long humans = allVerifications.stream().filter(verification -> verification.isHuman() == true).count();
+                final long mutants = allVerifications.size() - humans;
+
+                return new Statistic(mutants, humans);
+        }
 
         public PersonType analyzeDNA(String[] sequences){
                 sizeMatrix = sequences.length;
                 indexLimitMatrix = sizeMatrix - 1;
                 dna = convertToMatrix(sequences);
+                final boolean isMutant = isMutant(dna);
 
-                return isMutant(dna) ? PersonType.MUTANT : PersonType.HUMAN;
+                repository.save(new Verification(!isMutant));
+
+                return isMutant ? PersonType.MUTANT : PersonType.HUMAN;
         }
 
         private char[][] convertToMatrix(String[] sequences) {
