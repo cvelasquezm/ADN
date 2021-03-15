@@ -17,6 +17,9 @@ public class AnalyzerServiceTest {
         @InjectMocks
         AnalyzerService service;
 
+        @Mock
+        VerificationRepository repository;
+
 
         @Test
         public void testValidateMutantWithHorizontalAndVerticalAndOblique() {
