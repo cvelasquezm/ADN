@@ -20,17 +20,17 @@ public class Analyzer {
         @Autowired
         AnalyzerService analyzerService;
 
-        @RequestMapping(method = RequestMethod.POST, value = "mutant/", consumes = MediaType.APPLICATION_JSON_VALUE)
+        @RequestMapping(method = RequestMethod.POST, value = "mutant", consumes = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity analyzeDNA(@RequestBody Entry entry) {
 
                 if (analyzerService.analyzeDNA(entry.getDNA()).equals(PersonType.MUTANT)) {
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                        return ResponseEntity.ok().build();
                 }
 
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        @RequestMapping(method = RequestMethod.GET, value = "stats/")
+        @RequestMapping(method = RequestMethod.GET, value = "stats")
         public ResponseEntity getStats() {
                 Statistic stats = null;
                 try {
