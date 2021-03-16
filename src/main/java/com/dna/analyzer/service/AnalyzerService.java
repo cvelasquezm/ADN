@@ -17,6 +17,7 @@ public class AnalyzerService {
         private int indexLimitMatrix = 0;
         private char[][] dna;
         private final int maxNumCharacterOfSeq = 4;
+        private final int missingCharsToCompleteChain = maxNumCharacterOfSeq - 1;
 
         @Autowired
         VerificationRepository repository;
@@ -41,6 +42,7 @@ public class AnalyzerService {
                 dna = convertToMatrix(sequences);
                 final boolean isMutant = isMutant(dna);
 
+                //Save the verification
                 repository.save(new Verification(!isMutant));
 
                 return isMutant ? PersonType.MUTANT : PersonType.HUMAN;
@@ -67,6 +69,7 @@ public class AnalyzerService {
                 }
         }
 
+        //for each position search mutant sequences
         private boolean isMutant(char[][] dna) {
                 int numOfSequencesFound = 0;
                 for (int i = 0; i < dna.length; i++) {
@@ -79,10 +82,12 @@ public class AnalyzerService {
         }
 
         private boolean findMutantSequence(int x, int y, char character){
+                //Get all checkable positions
                 final List<Point> checkableHorizontalPositions = getCheckableHorizontalPositions(x, y);
                 final List<Point> checkableVerticalPositions = getCheckableVerticalPositions(x, y);
                 final List<Point> checkableObliquePositions = getCheckableObliquePositions(x, y);
 
+                //Check the positions and return the result
                 return positionMadeAChain(checkableHorizontalPositions, character) ||
                         positionMadeAChain(checkableVerticalPositions, character) ||
                         positionMadeAChain(checkableObliquePositions, character);
@@ -96,10 +101,10 @@ public class AnalyzerService {
         private List<Point> getCheckableHorizontalPositions(int row, int column) {
                 List<Point> points = new ArrayList<>();
 
-                if (column + (maxNumCharacterOfSeq - 1) <= indexLimitMatrix) {
-                        points.add(new Point(row, column + 1));
-                        points.add(new Point(row, column + 2));
-                        points.add(new Point(row, column + 3));
+                if (column + missingCharsToCompleteChain <= indexLimitMatrix) {
+                        for (int i = 1; i <= missingCharsToCompleteChain; i++) {
+                                points.add(new Point(row, column + i));
+                        }
                 }
 
                 return points;
@@ -108,10 +113,10 @@ public class AnalyzerService {
         private List<Point> getCheckableVerticalPositions(int row, int column) {
                 List<Point> points = new ArrayList<>();
 
-                if (row + (maxNumCharacterOfSeq - 1) <= indexLimitMatrix) {
-                        points.add(new Point(row + 1, column));
-                        points.add(new Point(row + 2, column));
-                        points.add(new Point(row + 3, column));
+                if (row + missingCharsToCompleteChain <= indexLimitMatrix) {
+                        for (int i = 1; i <= missingCharsToCompleteChain; i++) {
+                                points.add(new Point(row + i, column));
+                        }
                 }
 
                 return points;
@@ -120,16 +125,16 @@ public class AnalyzerService {
         private List<Point> getCheckableObliquePositions(int row, int column) {
                 List<Point> points = new ArrayList<>();
 
-                if (column + (maxNumCharacterOfSeq - 1) <= indexLimitMatrix && row + (maxNumCharacterOfSeq - 1) <= indexLimitMatrix) {
-                        points.add(new Point(row + 1, column + 1));
-                        points.add(new Point(row + 2, column + 2));
-                        points.add(new Point(row + 3, column + 3));
+                if (column + missingCharsToCompleteChain <= indexLimitMatrix && row + missingCharsToCompleteChain <= indexLimitMatrix) {
+                        for (int i = 1; i <= missingCharsToCompleteChain; i++) {
+                                points.add(new Point(row + i, column + i));
+                        }
                 }
 
-                if (column - (maxNumCharacterOfSeq - 1) >= 0 && row + (maxNumCharacterOfSeq - 1) <= indexLimitMatrix) {
-                        points.add(new Point(row + 1, column - 1));
-                        points.add(new Point(row + 2, column - 2));
-                        points.add(new Point(row + 3, column - 3));
+                if (column - missingCharsToCompleteChain >= 0 && row + missingCharsToCompleteChain <= indexLimitMatrix) {
+                        for (int i = 1; i <= missingCharsToCompleteChain; i++) {
+                                points.add(new Point(row + i, column - i));
+                        }
                 }
 
                 return points;

@@ -2,13 +2,10 @@ package com.dna.analyzer.service;
 
 import com.dna.analyzer.common.PersonType;
 import com.dna.analyzer.database.VerificationRepository;
-import com.dna.analyzer.model.Verification;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
