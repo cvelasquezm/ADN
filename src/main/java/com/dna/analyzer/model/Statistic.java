@@ -15,7 +15,7 @@ public class Statistic implements Serializable {
         public Statistic(long countMutantDna, long countHumanDna) {
                 this.countMutantDna = countMutantDna;
                 this.countHumanDna = countHumanDna;
-                this.ratio = countHumanDna == 0 ? 0 : Double.valueOf(this.countMutantDna / this.countHumanDna);
+                this.ratio = countHumanDna == 0 ? 0 : (double) this.countMutantDna / (double) this.countHumanDna;
         }
 
         public Statistic() {
